@@ -2,26 +2,17 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title></title>
-        <meta name="description" content="">
+        <title>Embed ideas</title>
         <meta name="viewport" content="width=device-width">
         <style>
             body {
                 color: red;
-            }
-            textarea {
-                height: 100px;
-                width: 300px;
             }
             iframe {
                 border: none;
                 margin: 0;
                 padding: 0;
                 outline: red;
-                height: 0;
-            }
-            iframe {
-                color: blue;
             }
         </style>
 
@@ -31,13 +22,10 @@
             window.addEventListener('DOMContentLoaded', function() {
 
                 require(['scripts/embed'], function(embed) {
-                    // Need to expose the done function to the parent window.
-                    window.embedDone = embed.embedDone;
                     embed.enhance();
 
-                    // Then we get a dynamic update
+                    //Then we get a dynamic update
                     var htmlFromApi = '<iframe class="api-embed" srcdoc="<script>document.write(\'async embed\');<' + '/script>"></iframe>';
-                    console.log(htmlFromApi);
 
                     // Bung it in the document and run the enhance again
                     document.querySelector('.async-embed').innerHTML = htmlFromApi;
@@ -53,10 +41,13 @@
 
         <div class="sync-embed">
             <p>Some content</p>
-            <iframe class="api-embed" data-minwidth="300" data-url="http://google.com" srcdoc='<div id="DC-note-60903" class="DC-note-container"></div><script src="http://s3.documentcloud.org/notes/loader.js"></script><script>dc.embed.loadNote("http://www.documentcloud.org/documents/371660/annotations/60903.js");</script>'></iframe>
+
+            <iframe class="api-embed" srcdoc='<div id="DC-note-60903" class="DC-note-container"></div><script src="http://s3.documentcloud.org/notes/loader.js"></script><script>dc.embed.loadNote("http://www.documentcloud.org/documents/371660/annotations/60903.js");</script>'></iframe>
+
             <p>Some content</p>
-            <p>Some content</p>
-            <iframe class="api-embed" data-minwidth="300" data-url="http://google.com" srcdoc="<script>document.write('async embed');</script>"></iframe>
+
+            <iframe class="api-embed" srcdoc="<script>document.write('normal sync embed');</script>"></iframe>
+
             <p>Some content</p>
         </div>
 

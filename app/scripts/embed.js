@@ -2,33 +2,39 @@ define(function() {
 
 	var count = 0;
 
-	function embedDone(id, wait) {
-		console.log(id);
+	function done(id, wait) {
 		setTimeout(function() {
 			resizeIframe(id);
 		}, (wait || 0));
     }
 
     function enhance() {
+    	// Get all embed iframes that have not been fully rendered yet.
 	    var embeds = document.querySelectorAll('iframe.api-embed:not(.api-embed-polyfilled)');
-	    console.log(embeds);
-	    for (var i = 0, j = embeds.length; i<j; ++i) {
-	        var id = 'embed-iframe-' + ++count;
-	        var iframe = embeds[i];
-	        iframe.id = id;
-	        var supportsSrcdoc = iframe.srcdoc;
-	        var src = iframe.getAttribute('srcdoc')
 
+	    for (var i = 0, j = embeds.length; i<j; ++i) {
+	        var iframe = embeds[i];
+
+	        // If we don't set this to 0 the body measurements later will never be < 180ish.
+	        iframe.style.height = 0;
+
+	        // Create an ID to track the iframe from other modules.
+	        var id = 'embed-iframe-' + ++count;
+	        iframe.id = id;
+
+	        var supportsSrcdoc = !!iframe.srcdoc;
+
+	        // If there's no srcdoc support, grab the code from the attribue and write it in to the iframe.
 	        if (!supportsSrcdoc) {
-	        	src += '<script>window.parent.embedDone("' + id + '", 1000);<' + '/script>';
+	        	var src = iframe.getAttribute('srcdoc') + '<script>window.parent.GuardianEmbedDone("' + id + '", 1000);<' + '/script>';
 	        	iframe.contentWindow.document.write(src);
 	        } else {
 	        	if (iframe.contentWindow.document.readyState === 'complete') {
-	        		embedDone(id);
+	        		done(id);
 	        	} else {
 	        		var thisid = id;
 	        		iframe.addEventListener('load', function() {
-	        			embedDone(thisid);
+	        			done(thisid);
 	        		}, false);
 	        	}
 	        }
@@ -43,14 +49,12 @@ define(function() {
 	    b.style.padding = 0;
 	    b.style.margin = 0;
 	    var height = iframe.contentWindow.document.height || iframe.contentWindow.document.body.offsetHeight;
-	    console.log(height);
 	    iframe.style.height = height + 'px';
 	}
 
-
+	window.GuardianEmbedDone = done;
 
 	return {
-		embedDone: embedDone,
 		enhance: enhance
 	}
 
