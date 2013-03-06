@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <style>
+            body {
+                color: red;
+            }
+            textarea {
+                height: 100px;
+                width: 300px;
+            }
+            iframe {
+                border: none;
+                margin: 0;
+                padding: 0;
+                outline: red;
+                height: 0;
+            }
+            iframe {
+                color: blue;
+            }
+        </style>
+
+        <script src="http://pasteup.guim.co.uk/js/lib/requirejs/2.1.5/require.min.js"></script>
+        <script>
+
+            window.addEventListener('load', function() {
+
+                require(['scripts/embed'], function(embed) {
+                    // Need to expose the done 
+                    window.embedDone = embed.embedDone;
+                    embed.enhance();
+
+                    // Then we get a dynamic update
+                    var htmlFromApi = '<iframe class="api-embed" srcdoc="<script>document.write(\'async ambed\');<' + '/script>"></iframe>';
+
+                    // Bung it in the document and run the enhance again
+                    document.querySelector('.async-embed').innerHTML = htmlFromApi;
+                    embed.enhance();
+
+                });
+
+            }, false);
+
+        </script>
+
+        <div class="async-embed"></div>
+
+        <div class="sync-embed">
+            <p>Some content</p>
+            <iframe class="api-embed" data-minwidth="300" data-url="http://google.com" srcdoc='<div id="DC-note-60903" class="DC-note-container"></div><script src="http://s3.documentcloud.org/notes/loader.js"></script><script>dc.embed.loadNote("http://www.documentcloud.org/documents/371660/annotations/60903.js");</script>'></iframe>
+            <p>Some content</p>
+            <p>Some content</p>
+            <iframe class="api-embed" data-minwidth="300" data-url="http://google.com" srcdoc='hello'></iframe>
+            <p>Some content</p>
+        </div>
+
+
+    </body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <style>
+            body {
+                color: red;
+            }
+            textarea {
+                height: 100px;
+                width: 300px;
+            }
+            .preview iframe,
+            .embed iframe,
+            .embed-dynamic iframe {
+                margin: 0;
+                padding: 0;
+                outline: red;
+            }
+            iframe {
+                color: blue;
+            }
+        </style>
+
+        
+        <script>
+            // Called once synchrnous code in the iframe has executed.
+            function done() {
+                console.log('done');
+                setTimeout(function() {
+                    resizeIframe();
+                    document.querySelector('.embed').innerHTML = getIframeContent();
+                }, 1000);
+            }
+
+            var resizeIframe, modernIframeSupport, getIframeContent;
+            (function() {
+                var button, textarea, preview, iframe;
+                window.addEventListener('load', function() {
+                    console.log('load');
+                    button = document.querySelector('button');
+                    textarea = document.querySelector('textarea');
+                    preview = document.querySelector('.preview');
+                    button.addEventListener('click', function() {
+                        preview.innerHTML = '';
+                        showPreview();
+                    }, false);
+                }, false);
+
+
+                function showPreview() {
+                    iframe = document.createElement('iframe');
+                    var src = document.querySelector('textarea').value;
+                    if (modernIframeSupport()) {
+                        console.log('seamless and srcdoc supported');
+                        iframe.setAttribute('seamless', 'seamless');
+                        iframe.srcdoc = src;
+                        iframe.addEventListener('load', function() {
+                            resizeIframe();
+                        }, false);
+                        preview.appendChild(iframe);
+                    } else {
+                        console.log('fallback support');
+                        src += '<script>window.parent.done();<' + '/script>';
+                        preview.appendChild(iframe);
+                        iframe.contentWindow.document.write(src);
+                    }
+                }
+
+                resizeIframe = function() {
+                    var b = iframe.contentWindow.document.body;
+                    b.style.padding = 0;
+                    b.style.margin = 0;
+                    iframe.style.height = (b.offsetHeight + 50) + 'px';
+                }
+
+                modernIframeSupport = function() {
+                    var iframe = document.createElement('iframe');
+                    document.body.appendChild(iframe);
+                    // Test attributes available as props
+                    iframe.setAttribute('seamless', 'seamless');
+                    var seamless = iframe.seamless;
+                    iframe.setAttribute('srcdoc', 'testsrcdoc');
+                    var srcdoc = iframe.srcdoc;
+
+                    document.body.removeChild(iframe);
+                    return seamless && (srcdoc === 'testsrcdoc');
+                }
+
+                getIframeContent = function() {
+                    return iframe.contentWindow.document.body.innerHTML;
+                }
+
+            })();
+
+        </script>
+
+    </head>
+    <body>
+    
+        <p>Enter embed code:</p>
+        <textarea></textarea>
+        <button>Preview</button>
+
+
+        <hr />
+
+        <div class="preview">
+        </div>
+        <div class="embed">
+            <iframe id="embed-xxx"></iframe>
+            <script>
+            var embedXXXDone;
+            var iframeXXX;
+            (function() {
+                embedXXXDone = function() {
+                    console.log('done');
+                    console.log(iframeXXX.contentWindow.document.body.offsetHeight);
+                    iframeXXX.style.height = (iframeXXX.contentWindow.document.body.offsetHeight + 50) + 'px';
+                }
+                iframeXXX = document.getElementById("embed-xxx");
+                var src = "<script>document.write('hello dynamic2');<" + "/script>";
+                src += "<script>window.parent.embedXXXDone();<" + "/script>";
+                window.addEventListener('load', function() {iframeXXX.contentWindow.document.write(src);}, false);
+            })();
+            </script>
+        </div>
+
+        <!--<div class="embed-here"></div>
+
+        <script>
+        var html = '<div class="embed-dynamic"><iframe id="embed-xxx"></iframe><script>var iframe = document.getElementById("embed-xxx");var src = "<script>document.write(\'hello\');<' + '/script>";iframe.contentWindow.document.write(src);<' + '/script></div>';
+        console.log(html);
+        var el = document.createElement('div');
+        el.innerHTML = html;
+        console.log(el);
+        document.querySelector('.embed-here').appendChild(el);
+        </script>-->
+        <script>console.log('here');</script>
+    </body>
+</html>
