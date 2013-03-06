@@ -28,15 +28,16 @@
         <script src="http://pasteup.guim.co.uk/js/lib/requirejs/2.1.5/require.min.js"></script>
         <script>
 
-            window.addEventListener('load', function() {
+            window.addEventListener('DOMContentLoaded', function() {
 
                 require(['scripts/embed'], function(embed) {
-                    // Need to expose the done 
+                    // Need to expose the done function to the parent window.
                     window.embedDone = embed.embedDone;
                     embed.enhance();
 
                     // Then we get a dynamic update
-                    var htmlFromApi = '<iframe class="api-embed" srcdoc="<script>document.write(\'async ambed\');<' + '/script>"></iframe>';
+                    var htmlFromApi = '<iframe class="api-embed" srcdoc="<script>document.write(\'async embed\');<' + '/script>"></iframe>';
+                    console.log(htmlFromApi);
 
                     // Bung it in the document and run the enhance again
                     document.querySelector('.async-embed').innerHTML = htmlFromApi;
@@ -55,7 +56,7 @@
             <iframe class="api-embed" data-minwidth="300" data-url="http://google.com" srcdoc='<div id="DC-note-60903" class="DC-note-container"></div><script src="http://s3.documentcloud.org/notes/loader.js"></script><script>dc.embed.loadNote("http://www.documentcloud.org/documents/371660/annotations/60903.js");</script>'></iframe>
             <p>Some content</p>
             <p>Some content</p>
-            <iframe class="api-embed" data-minwidth="300" data-url="http://google.com" srcdoc='hello'></iframe>
+            <iframe class="api-embed" data-minwidth="300" data-url="http://google.com" srcdoc="<script>document.write('async embed');</script>"></iframe>
             <p>Some content</p>
         </div>
 
